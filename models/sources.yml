@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: google_drive
+    database: FIVETRAN_DATABASE
+    schema: DRIVE_SCHEMA
+    tables:
+      - name: EXPENSES
+
+  - name: snowflake_db
+    database: FIVETRAN_DATABASE
+    schema: SNOWFLAKE_DB_WEB_SCHEMA
+    tables:
+      - name: ITEM_VIEWS
