@@ -1,0 +1,11 @@
+SELECT 
+    _FIVETRAN_ID as _FIVETRAN_ID,
+    SESSION_ID as SESSION_ID, 
+    IP as IP,
+    CLIENT_ID as CLIENT_ID, 
+    SESSION_AT as SESSION_AT_TS, 
+    OS as OS, 
+    _FIVETRAN_SYNCED AS _FIVETRAN_SYNCED_TS,
+FROM {{source("snowflake_db", "SESSIONS")}}
+
+
