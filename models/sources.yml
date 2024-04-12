@@ -8,7 +8,6 @@ sources:
       - name: EXPENSES
       - name: RETURNS
       - name: HR_JOINS
-      - name: HR_QUITS
 
   - name: snowflake_db
     database: FIVETRAN_DATABASE
@@ -17,4 +16,3 @@ sources:
       - name: ITEM_VIEWS
       - name: SESSIONS
       - name: ORDERS
-      - name: PAGE_VIEWS
