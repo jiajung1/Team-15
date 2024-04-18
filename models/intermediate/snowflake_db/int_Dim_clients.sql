@@ -1,0 +1,14 @@
+-- Dim_clients table
+SELECT  
+    CLIENT_NAME,
+    PHONE,
+    SHIPPING_ADDRESS,
+    STATE
+FROM(SELECT 
+        CLIENT_NAME,
+        PHONE,
+        SHIPPING_ADDRESS,
+        STATE,
+        ROW_NUMBER() OVER (PARTITION BY CLIENT_NAME ORDER BY ORDER_AT_TS DESC) as rn
+    FROM {{ref('BASE_ORDERS')}})
+WHERE rn = 1
