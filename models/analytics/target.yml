@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: daily_finances
+    description: The daily revenue and costs associated
+    columns: 
+      - name: DAILY_EXPENSE
+        description: total expense on the day
+      - name: DAILY_PROFIT
+        description: profit on the day
+      - name: DAILY_REFUND
+        description: refund on the day
+      - name: DAILY_REVENUE
+        description: revenue on the day
+      - name: DATE
+        description: date of transcations
+        tests:
+          - unique
+          - not_null
+              
