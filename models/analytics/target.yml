@@ -3,7 +3,7 @@ version: 2
 models:
   - name: daily_finances
     description: The daily revenue and costs associated
-    columns: 
+    columns:
       - name: DAILY_EXPENSE
         description: total expense on the day
       - name: DAILY_PROFIT
@@ -17,4 +17,114 @@ models:
         tests:
           - unique
           - not_null
-              
+
+  - name: fact_order
+    description: One order per row with summary
+    columns:
+      - name: ORDER_ID
+        description: Unique identifier for each order
+        tests:
+          - unique
+          - not_null
+      - name: CLIENT_NAME
+        description: Name of the client who placed the order
+      - name: SESSION_ID
+        description: Unique identifier for the session associated with the order
+      - name: ORDER_AT_TS
+        description: Timestamp when the order was placed
+      - name: SHIPPING_COST_USD
+        description: Cost of shipping for the order in USD
+      - name: TAX_RATE
+        description: Tax rate applied to the order
+      - name: SESSION_PRICE
+        description: Price of the session associated with the order
+      - name: IS_RETURNED
+        description: Indicator if the order was returned (1 for returned, 0 otherwise)
+      - name: IS_REFUNDED
+        description: Indicates if the order was refunded
+
+  - name: fact_session
+    description: Summary of sessions with details
+    columns:
+      - name: SESSION_ID
+        description: Unique identifier for each session
+        tests:
+          - unique
+          - not_null
+      - name: NUM_PAGES_VISITED
+        description: Number of pages visited during the session
+      - name: PAGES_VISITED
+        description: Array containing the names of pages visited during the session
+      - name: NUM_ITEM_VISITED
+        description: Number of items visited during the session
+      - name: NUM_ORDERS_MADE
+        description: Number of orders made during the session
+      - name: ITEMS_ADDED_TO_CART
+        description: Number of items added to the cart during the session
+      - name: SESSION_PRICE
+        description: Price of the session
+      - name: IP
+        description: IP address associated with the session
+      - name: CLIENT_ID
+        description: Unique identifier for the client associated with the session
+      - name: SESSION_AT_TS
+        description: Timestamp when the session occurred
+      - name: OS
+        description: Operating system used during the session
+
+  - name: dim_clients
+    description: Details of clients
+    columns:
+      - name: CLIENT_NAME
+        description: Name of the client
+        tests:
+          - unique
+          - not_null
+      - name: PHONE
+        description: Phone number of the client
+      - name: SHIPPING_ADDRESS
+        description: Shipping address of the client
+      - name: STATE
+        description: State associated with the client's shipping address
+
+  - name: dim_employees
+    description: Details of employees
+    columns:
+      - name: EMPLOYEE_ID
+        description: ID of the employee
+        tests:
+          - unique
+          - not_null
+      - name: NAME
+        description: Name of the employee
+      - name: HIRE_DATE
+        description: Date of hiring
+        tests:
+          - not_null
+      - name: QUIT_DATE
+        description: Date of quitting
+      - name: CITY
+        description: City where the employee resides
+      - name: ADDRESS
+        description: Address of the employee
+      - name: TITLE
+        description: Job title of the employee
+      - name: ANNUAL_SALARY
+        description: Annual salary of the employee
+      - name: STILL_IN_COMPANY
+        description: Indicates if the employee is still working in the company
+
+  - name: dim_item
+    description: Details of items
+    columns:
+      - name: ITEM_NAME
+        description: Name of the item
+        tests:
+          - unique
+          - not_null
+      - name: ITEM_COUNT
+        description: Count of the item
+      - name: PRICE_ARRAY
+        description: Array containing prices of the item
+
+
