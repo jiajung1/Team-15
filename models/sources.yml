@@ -11,7 +11,7 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
       - name: RETURNS
@@ -20,7 +20,7 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
       - name: HR_JOINS
@@ -29,7 +29,7 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
       - name: HR_QUITS
@@ -38,7 +38,7 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
 
@@ -52,7 +52,7 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
       - name: SESSIONS
@@ -61,7 +61,7 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
       - name: ORDERS
@@ -70,7 +70,7 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
       - name: PAGE_VIEWS
@@ -79,6 +79,6 @@ sources:
             count: 1
             period: day
           error_after:
-            count: 5
+            count: 2
             period: day
         loaded_at_field: _fivetran_synced
