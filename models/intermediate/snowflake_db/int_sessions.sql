@@ -59,7 +59,7 @@ unique_sessions AS (
     ) AS subquery
     WHERE session_row_number = 1
 
-),
+)
 
 
 SELECT bs.session_id,

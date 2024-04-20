@@ -1,12 +1,12 @@
-with orders AS
+with small_orders AS
 (
     SELECT *
     FROM (
         SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS order_row_number,
+               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS session_row_number,
         FROM {{ref('BASE_ORDERS')}}
     ) AS subquery
-    WHERE order_row_number = 1
+    WHERE session_row_number = 1
 ),
 
 num_page_views AS (
@@ -27,7 +27,7 @@ orders AS (
     FROM (
         SELECT *,
                ROW_NUMBER() OVER (PARTITION BY ORDER_ID ORDER BY ORDER_AT_TS) AS order_row_number,
-        FROM {{ref('BASE_ORDERS')}}
+        FROM small_orders
     ) AS subquery
     WHERE order_row_number = 1
 ),
@@ -103,8 +103,12 @@ FROM orders
 LEFT JOIN int_sessions
 --ON FIVETRAN_DATABASE.SNOWFLAKE_DB_WEB_SCHEMA.ORDERS.SESSION_ID = FIVETRAN_DATABASE.SNOWFLAKE_DB_WEB_SCHEMA.ITEM_VIEWS.SESSION_ID
 ON int_sessions.SESSION_ID = orders.SESSION_ID
+),
+unique_returns AS (
+SELECT order_id, count(*) AS num_items_returned
+FROM {{ref('BASE_RETURNS')}}
+GROUP BY order_id
 )
-
 SELECT int_orders.ORDER_ID,
     int_orders.CLIENT_NAME,
     int_orders.SESSION_ID,
@@ -112,16 +116,9 @@ SELECT int_orders.ORDER_ID,
     int_orders.SHIPPING_COST_USD,
     int_orders.TAX_RATE,
     SESSION_PRICE,
-    CASE 
-        WHEN RETURNED_AT IS NULL THEN 0
-        ELSE 1
-    END AS is_returned,
-    COALESCE(is_refunded, 'no') AS is_refunded
- 
 from int_orders
-LEFT JOIN {{ref('BASE_RETURNS')}} br
+LEFT JOIN unique_returns br
 ON br.ORDER_ID=int_orders.ORDER_ID
-
 
 -- SELECT *
 -- FROM PROD.DEFAULT_BASE.BASE_ITEM_VIEWS
