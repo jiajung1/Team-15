@@ -6,15 +6,79 @@ sources:
     schema: DRIVE_SCHEMA
     tables:
       - name: EXPENSES
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
       - name: RETURNS
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
       - name: HR_JOINS
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
       - name: HR_QUITS
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
 
   - name: snowflake_db
     database: FIVETRAN_DATABASE
     schema: SNOWFLAKE_DB_WEB_SCHEMA
     tables:
       - name: ITEM_VIEWS
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
       - name: SESSIONS
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
       - name: ORDERS
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
       - name: PAGE_VIEWS
+        freshness:
+          warn_after:
+            count: 1
+            period: day
+          error_after:
+            count: 5
+            period: day
+        loaded_at_field: _fivetran_synced
