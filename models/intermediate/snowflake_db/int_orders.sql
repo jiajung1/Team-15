@@ -26,7 +26,7 @@ orders AS (
     SELECT *
     FROM (
         SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS order_row_number,
+               ROW_NUMBER() OVER (PARTITION BY ORDER_ID ORDER BY ORDER_AT_TS) AS order_row_number,
         FROM {{ref('BASE_ORDERS')}}
     ) AS subquery
     WHERE order_row_number = 1
