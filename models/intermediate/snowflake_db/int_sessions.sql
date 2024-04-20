@@ -63,7 +63,7 @@ SELECT bs.session_id,
     SESSION_AT_TS,
     OS
 FROM {{ref('BASE_SESSIONS')}} bs
-LEFT JOIN session_info_with_orders si ON si.session_id=bs.session_id
+INNER JOIN session_info_with_orders si ON si.session_id=bs.session_id
 
 -- session price is regardless of whether order was made or not. We will only include the session_price 
 -- in the expenses when an order was made
