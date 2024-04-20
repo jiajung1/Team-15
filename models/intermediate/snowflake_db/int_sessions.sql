@@ -49,7 +49,18 @@ session_info_with_orders AS (
             SESSION_PRICE
     FROM session_info si
     LEFT JOIN num_orders no ON si.session_id = no.session_id
-)
+),
+unique_sessions AS (
+    SELECT *
+    FROM (
+        SELECT *,
+               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY SESSION_AT_TS) AS session_row_number,
+        FROM {{ref('BASE_SESSIONS')}}
+    ) AS subquery
+    WHERE session_row_number = 1
+
+),
+
 
 SELECT bs.session_id,
     COALESCE(num_pages_visited, 0) as num_pages_visited,
@@ -62,7 +73,7 @@ SELECT bs.session_id,
     CLIENT_ID,
     SESSION_AT_TS,
     OS
-FROM {{ref('BASE_SESSIONS')}} bs
+FROM unique_sessions bs
 INNER JOIN session_info_with_orders si ON si.session_id=bs.session_id
 
 -- session price is regardless of whether order was made or not. We will only include the session_price 
