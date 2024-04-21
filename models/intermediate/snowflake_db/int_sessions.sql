@@ -13,12 +13,21 @@ num_item_views AS (
     FROM {{ref('BASE_ITEM_VIEWS')}}
     GROUP BY session_id
 ),
+small_orders AS (
+    SELECT *
+    FROM (
+        SELECT *,
+               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS session_row_number,
+        FROM {{ref('BASE_ORDERS')}}
+    ) AS subquery
+    WHERE session_row_number = 1
+),
 orders AS (
     SELECT *
     FROM (
         SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS order_row_number,
-        FROM {{ref('BASE_ORDERS')}}
+               ROW_NUMBER() OVER (PARTITION BY ORDER_ID ORDER BY ORDER_AT_TS) AS order_row_number,
+        FROM small_orders
     ) AS subquery
     WHERE order_row_number = 1
 ),
