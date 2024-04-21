@@ -1,12 +1,12 @@
-with orders AS
+with temp_orders AS
 (
     SELECT *
     FROM (
         SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS order_row_number,
+               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS session_row_number,
         FROM {{ref('BASE_ORDERS')}}
     ) AS subquery
-    WHERE order_row_number = 1
+    WHERE session_row_number = 1
 ),
 
 num_page_views AS (
@@ -26,8 +26,8 @@ orders AS (
     SELECT *
     FROM (
         SELECT *,
-               ROW_NUMBER() OVER (PARTITION BY SESSION_ID ORDER BY ORDER_AT_TS) AS order_row_number,
-        FROM {{ref('BASE_ORDERS')}}
+               ROW_NUMBER() OVER (PARTITION BY ORDER_ID ORDER BY ORDER_AT_TS) AS order_row_number,
+        FROM temp_orders
     ) AS subquery
     WHERE order_row_number = 1
 ),
