@@ -105,9 +105,15 @@ LEFT JOIN int_sessions
 ON int_sessions.SESSION_ID = orders.SESSION_ID
 ),
 unique_returns AS (
-SELECT order_id, count(*) AS num_items_returned
-FROM {{ref('BASE_RETURNS')}}
-GROUP BY order_id
+    WITH RankedOrders AS (
+        SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY ORDER_ID ORDER BY RETURNED_AT) AS rn
+        FROM {{ref('BASE_RETURNS')}}
+        WHERE is_refunded = 'yes'
+    )
+    SELECT ORDER_ID, RETURNED_AT
+    FROM RankedOrders
+    WHERE rn = 1
 )
 SELECT int_orders.ORDER_ID,
     int_orders.CLIENT_NAME,
@@ -116,6 +122,7 @@ SELECT int_orders.ORDER_ID,
     int_orders.SHIPPING_COST_USD,
     int_orders.TAX_RATE,
     SESSION_PRICE,
+    RETURNED_AT
 from int_orders
 LEFT JOIN unique_returns br
 ON br.ORDER_ID=int_orders.ORDER_ID
