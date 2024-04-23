@@ -92,7 +92,17 @@ daily_expenses AS (SELECT "DATE" as expense_date,
     SUM(EXPENSE_AMOUNT) AS DAILY_EXPENSE,
 FROM {{ref('BASE_EXPENSES')}}
 GROUP BY expense_date),
-
+unique_returns AS (
+    WITH RankedOrders AS (
+        SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY ORDER_ID ORDER BY RETURNED_AT) AS rn
+        FROM {{ref('BASE_RETURNS')}}
+        WHERE is_refunded = 'yes'
+    )
+    SELECT ORDER_ID, RETURNED_AT
+    FROM RankedOrders
+    WHERE rn = 1
+),
 refund_orders AS (
 SELECT int_orders.ORDER_ID,
     int_orders.CLIENT_NAME,
@@ -104,12 +114,14 @@ SELECT int_orders.ORDER_ID,
     returned_at,
     
 from int_orders
-LEFT JOIN {{ref('BASE_RETURNS')}} br
+LEFT JOIN unique_returns br
 ON br.ORDER_ID=int_orders.ORDER_ID
 ),
+
 refund_daily_expenses AS(
     SELECT RETURNED_AT,
     SUM(SESSION_PRICE*(1+TAX_RATE)+SHIPPING_COST_USD) AS TOTAL_PRICE,
+    COUNT(*) AS NUM_ORDERS_REFUNDED
 FROM refund_orders
 WHERE RETURNED_AT IS NOT NULL
 GROUP BY RETURNED_AT
@@ -133,7 +145,8 @@ SELECT
     DAILY_REVENUE,
     DAILY_EXPENSE,
     COALESCE(TOTAL_PRICE, 0) AS DAILY_REFUND,
-    DAILY_REVENUE - DAILY_EXPENSE - DAILY_REFUND AS DAILY_PROFIT
+    DAILY_REVENUE - DAILY_EXPENSE - DAILY_REFUND AS DAILY_PROFIT,
+    COALESCE(NUM_ORDERS_REFUNDED, 0) AS NUM_ORDERS_REFUNDED
 FROM expense_and_revenue ear
 FULL JOIN refund_daily_expenses rde
 ON ear.ORDER_DATE = rde.RETURNED_AT
